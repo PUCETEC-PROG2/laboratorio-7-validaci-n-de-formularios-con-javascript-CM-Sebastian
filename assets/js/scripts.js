@@ -23,24 +23,15 @@ document.addEventListener('DOMContentLoaded', function() {
  */
 function validateForm() {
     let isValid = true;
-    
+    eliminarError();
     // ==========================================
     // VALIDACIÓN DE EJEMPLO: Campo Nombre
     // ==========================================
     const nombre = document.getElementById('nombre');
-    const valorNombre = nombre.value.trim();
-    
-    if (valorNombre === '') {
-        // Campo vacío - marcar como inválido
-        nombre.classList.add('no-valid');
-        isValid = false;
-    } else if (valorNombre.length < 2) {
-        // Muy corto - marcar como inválido
-        nombre.classList.add('no-valid');
-        isValid = false;
-    } else {
-        // Campo válido - remover marca de error si existe
-        nombre.classList.remove('no-valid');
+    let error = 'El nombre esta mal >:(';
+    if (!validarCampoTexto(nombre, 3, error)) {
+        isValid = false
+        
     }
     
     // ==========================================
@@ -49,19 +40,9 @@ function validateForm() {
     // Requisitos: No vacío, mínimo 2 caracteres
     // Pista: Usa getElementById('apellidoPaterno')
     const apellidoPaterno = document.getElementById('apellidoPaterno');
-    const valorApellPat = apellidoPaterno.value.trim();
-    // Tu código aquí...
-    if (valorApellPat === '') {
-        // Campo vacío - marcar como inválido
-        apellidoPaterno.classList.add('no-valid');
-        isValid = false;
-    } else if (valorApellPat.length < 2) {
-        // Muy corto - marcar como inválido
-        apellidoPaterno.classList.add('no-valid');
-        isValid = false;
-    } else {
-        // Campo válido - remover marca de error si existe
-        apellidoPaterno.classList.remove('no-valid');
+    error = 'El apellido de tu papá esta mal >:(';
+    if (!validarCampoTexto(apellidoPaterno, 2,error)) {
+        isValid = false
     }
     
     // ==========================================
@@ -69,19 +50,9 @@ function validateForm() {
     // ==========================================
     // Requisitos: No vacío, mínimo 2 caracteres
     const apellidoMaterno = document.getElementById('apellidoMaterno');
-    const valorApellMat = apellidoMaterno.value.trim();
-    // Tu código aquí...
-    if (valorApellMat === '') {
-        // Campo vacío - marcar como inválido
-        apellidoMaterno.classList.add('no-valid');
-        isValid = false;
-    } else if (valorApellMat.length < 2) {
-        // Muy corto - marcar como inválido
-        apellidoMaterno.classList.add('no-valid');
-        isValid = false;
-    } else {
-        // Campo válido - remover marca de error si existe
-        apellidoMaterno.classList.remove('no-valid');
+    error = 'El apellido de tu mamá esta mal >:(';
+    if (!validarCampoTexto(apellidoMaterno, 2, error)) {
+        isValid = false
     }
     
     // ==========================================
@@ -105,61 +76,50 @@ function validateForm() {
     // ==========================================
     // Requisitos: No vacío, mínimo 10 caracteres
     const motivo = document.getElementById('motivo');
-    const valorMotivo = motivo.value.trim();
-    // Tu código aquí...
-    if (valorMotivo === '') {
-        // Campo vacío - marcar como inválido
-        motivo.classList.add('no-valid');
-        isValid = false;
-    } else if (valorMotivo.length < 10) {
-        // Muy corto - marcar como inválido
-        motivo.classList.add('no-valid');
-        isValid = false;
-    } else {
-        // Campo válido - remover marca de error si existe
-        motivo.classList.remove('no-valid');
+    error = 'Mínimo 10 caracteres (Mucho texto) ._.'
+    if (!validarCampoTexto(motivo, 10, error)) {
+        isValid = false
     }
-     
     // ==========================================
     // TODO: Validar Tipo de Cuenta
     // ==========================================
     // Requisitos: Debe tener un valor seleccionado (no vacío)
     // Pista: Verifica que select.value !== ''
     const cuenta = document.getElementById('tipoCuenta');
-    // Tu código aquí...
-    //FALTA ALGO
-    if (cuenta.value === '') {
-        // Campo vacío - marcar como inválido
-        cuenta.classList.add('no-valid');
-        isValid = false;
-    } else {
-        // Campo válido - remover marca de error si existe
-        motivo.classList.remove('no-valid');
+    error = 'No se seleccionado cuenta :v';
+    if (!validarCampoTexto(cuenta, 0, error)) {
+        isValid = false
     }
     
     // ==========================================
     // TODO: Validar Calle
     // ==========================================
     // Requisitos: No vacío, mínimo 3 caracteres
-    
-    // Tu código aquí...
-    
+    const calle = document.getElementById('calle');
+    error = 'Falta calle, mínimo 3 caracteres >:(';
+    if (!validarCampoTexto(calle, 3, error)) {
+        isValid = false
+    }
     
     // ==========================================
     // TODO: Validar Número
     // ==========================================
     // Requisitos: No vacío
-    
-    // Tu código aquí...
-    
+    const numero = document.getElementById('numero');
+    error = 'El numero no va vacío >:(';
+    if (!validarCampoTexto(numero, 0,error)) {
+        isValid = false
+    }
     
     // ==========================================
     // TODO: Validar Intersección
     // ==========================================
     // Requisitos: No vacío, mínimo 3 caracteres
-    
-    // Tu código aquí...
-    
+    const intersecc = document.getElementById('interseccion');
+    error = 'Falta la interseccion, mínimo 3 caracteres >:(';
+    if (!validarCampoTexto(intersecc, 3,error)) {
+        isValid = false
+    }
     
     // Retornar el resultado final de la validación
     return isValid;
@@ -178,18 +138,30 @@ function validateForm() {
  * @param {number} minLength - Longitud mínima requerida
  * @returns {boolean} - true si es válido, false si no
  */
-function validarCampoTexto(campo, minLength) {
+function validarCampoTexto(campo, minLength, mensaje) {
     const valor = campo.value.trim();
+    const errorDiv = document.createElement('div');
     
     if (valor === '' || valor.length < minLength) {
         campo.classList.add('no-valid');
+        errorDiv.className = 'error-message';
+        errorDiv.textContent = mensaje;
+        campo.parentNode.insertBefore(errorDiv, campo.nextSibling);
         return false;
     } else {
         campo.classList.remove('no-valid');
+        errorDiv.remove();
         return true;
     }
+
 }
 
+function eliminarError(){
+    const errorAnt = document.querySelectorAll('.error-message');
+    errorAnt.forEach(error =>{
+        error.remove();
+        });
+}
 // Ejemplo de uso de la función auxiliar:
 // if (!validarCampoTexto(nombre, 2)) {
 //     isValid = false;
